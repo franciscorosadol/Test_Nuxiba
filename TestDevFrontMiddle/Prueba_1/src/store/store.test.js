@@ -66,6 +66,15 @@ describe('todos', () => {
     expect(store.getState().todos.items.map((t) => t.id)).toEqual([9, 5, 2]);
   });
 
+  it('nombra las tareas como Tarea 1, Tarea 2... según su orden', async () => {
+    simularApi({ '/users/1/todos': [{ id: 1, title: 'delectus' }, { id: 2, title: 'quis ut' }] });
+    const store = crearStore();
+
+    await store.dispatch(cargarTodosDeUsuario(1));
+
+    expect(store.getState().todos.items.map((t) => t.title)).toEqual(['Tarea 2', 'Tarea 1']);
+  });
+
   it('envía la nueva tarea con POST y la agrega a la lista', async () => {
     simularApi({ '/users/1/todos': [{ id: 3 }], '/todos': { id: 201 } });
     const store = crearStore();

@@ -7,7 +7,11 @@ export const ordenarPorIdDescendente = (todos) => [...todos].sort((a, b) => b.id
 
 export const cargarTodosDeUsuario = createAsyncThunk('todos/cargarDeUsuario', async (userId) => {
   const todos = await jsonPlaceholderApi.obtenerTodosDeUsuario(userId);
-  return ordenarPorIdDescendente(todos);
+  // Los títulos del API vienen en latín, se reemplazan por nombres sencillos (Tarea 1, Tarea 2...)
+  const conNombre = [...todos]
+    .sort((a, b) => a.id - b.id)
+    .map((todo, indice) => ({ ...todo, title: `Tarea ${indice + 1}` }));
+  return ordenarPorIdDescendente(conNombre);
 });
 
 export const agregarTodo = createAsyncThunk('todos/agregar', async ({ userId, title, completed }) => {
