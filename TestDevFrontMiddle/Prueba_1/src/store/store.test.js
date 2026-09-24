@@ -45,6 +45,20 @@ describe('posts', () => {
     expect(post.comments).toHaveLength(2);
   });
 
+  it('reemplaza los textos por nombres sencillos en español', async () => {
+    simularApi({
+      '/users/1/posts': [{ id: 7, title: 'qui est', body: 'et ea' }],
+      '/posts/7/comments': [{ id: 31, name: 'id labore', email: 'a@b.c', body: 'laudantium' }],
+    });
+    const store = crearStore();
+
+    await store.dispatch(cargarPostsDeUsuario(1));
+
+    const [post] = store.getState().posts.items;
+    expect(post.title).toBe('Publicación 1');
+    expect(post.comments[0]).toMatchObject({ name: 'Comentario 1', email: 'a@b.c' });
+  });
+
   it('se limpia al seleccionar otro usuario', async () => {
     simularApi({ '/users/1/posts': [{ id: 7 }], '/posts/7/comments': [] });
     const store = crearStore();
